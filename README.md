@@ -1,1 +1,1 @@
-# maxscale
+# maxscale-docker
