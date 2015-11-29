@@ -5,8 +5,8 @@ MAINTAINER Adam Craven <adam@ChannelAdam.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 # MaxScale downloads are listed here: https://mariadb.com/my_portal/download/maxscale
-RUN apt-get update && apt-get install -y wget && \
-    wget https://downloads.mariadb.com/enterprise/wm8m-g6r5/mariadb-maxscale/1.2.1/debian/dists/jessie/main/binary-amd64/maxscale-1.2.1-1.deb_jessie.x86_64.deb && \
+# apt-get update && apt-get install -y wget && \
+RUN wget https://downloads.mariadb.com/enterprise/wm8m-g6r5/mariadb-maxscale/1.2.1/debian/dists/jessie/main/binary-amd64/maxscale-1.2.1-1.deb_jessie.x86_64.deb && \
     dpkg -i maxscale-1.2.1-1.deb_jessie.x86_64.deb
 
 RUN apt-get update && apt-get install -y maxscale && \
