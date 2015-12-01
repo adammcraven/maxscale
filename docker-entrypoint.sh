@@ -21,25 +21,27 @@ validate_variables() {
 	fi
 }
 
+function joinArrayToString { local IFS="$1"; shift; echo "$*"; }
 
 create_config_file() {
 
-	# Do a loop here instead
-	#echo $address1  address1 >> /etc/hosts
-	#echo $address2  address2 >> /etc/hosts
-	#echo $address3  address3 >> /etc/hosts
+    dbServers=()
+
+	# Split comma separated list of database server addresses
+	IFS=',' read -r -a dbServerAddresses <<< "$DB_SERVER_ADDRESSES"
+	for index in "${!dbServerAddresses[@]}"
+	do
+	  position = ${index+1}
+	  
+      ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
+      addressHostName = "address${position}"
+      # echo $address1  address1 >> /etc/hosts
+      echo $ipAddress  $addressHostName >> /etc/hosts
+
+	  dbServers+=("dbserv${position}")	  
+    done
 	
-	
-	# Get list of database servers
-	
-	# Split comma separated list of database servers
-	# TODO
-	
-	
-	
-	
-	$commaSeparatedDbServers="dbserv1,dbserv2,dbserv3"
-	
+	commaSeparatedDbServers=joinArrayToString , "${dbServers[@]}"
 	
 	echo "==> Creating maxscale config file"
 	maxscaleConf="/etc/maxscale.d/maxscale.cnf"
@@ -72,8 +74,10 @@ create_config_file() {
 	socket=/tmp/ClusterMaster
 EOM
 	) >> $maxscaleConf
-	
-	
+
+
+
+TODO	
 	# Do a loop here instead
 	( cat <<EOM
 	[dbserv1]
