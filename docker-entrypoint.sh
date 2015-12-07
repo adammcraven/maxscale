@@ -63,6 +63,7 @@ create_config_file() {
 	commaSeparatedDbServers=joinArrayToString , "${dbServers[@]}"
 	
 	# Reference:
+    # https://mariadb.com/kb/en/mariadb-enterprise/mariadb-maxscale/maxscale-readwrite-splitting-with-galera-cluster/	
 	# https://mariadb.com/kb/en/mariadb-enterprise/mariadb-maxscale/maxscale-configuration-usage-scenarios/
 	
 	echo "==> Creating maxscale config file"
@@ -70,33 +71,30 @@ create_config_file() {
 	
 	( cat <<EOM
 	[maxscale]
-	threads=2
+	threads=4
 	log_messages=1
 	log_trace=0
 	log_debug=0
 	logdir=/tmp/
 	
-	[Splitter Service]
-	type=service
-	router=readconnroute
-	router_options=master,slave
-	***TODO servers=$commaSeparatedDbServers
-	
-	[Splitter Service]
+	[Galera Splitter Service]
 	type=service
 	router=readwritesplit
-	***TODO servers=$commaSeparatedDbServers
+	servers=$commaSeparatedDbServers
+	#max_slave_connections=50%
+	#max_slave_replication_lag=61
 	user=$MAXSCALE_USER
 	passwd=$MAXSCALE_PASSWORD
+	#filters=qla|fetch|from
 	
-	[Splitter Listener]
+	[Galera Splitter Listener]
 	type=listener
-	service=Splitter Service
+	service=Galera Splitter Service
 	protocol=MySQLClient
 	port=3306
-	socket=/tmp/ClusterMaster
-	
-	
+	#socket=/tmp/ClusterMaster
+	#socket=/servers/maxscale/galera.sock
+
 EOM
 	) >> $maxscaleConf
 
@@ -119,18 +117,16 @@ EOM
 		type=server
 		address=$ipAddress
 		port=$port
-		# lowest index server, if available, becomes Master
+		# node with the lowest index, if available, becomes Master
 		wsrep_local_index=$position
 		protocol=MySQLBackend
-		monitoruser=$MONITOR_USER
-		monitorpw=$MONITOR_PASSWORD
 EOM
 	  ) >> $maxscaleConf
     done
 
 
 
-	
+	# Assign one node as the master and all others as slaves
 	( cat <<EOM
 	[Galera Monitor]
 	type=monitor
@@ -143,13 +139,13 @@ EOM
 	backend_read_timeout=1
 	backend_write_timeout=2
 	# galeramon specific options
+	# always switch to the master with the lowest wsrep_local_index
 	disable_master_failback=0
 	available_when_donor=0
 	# 0 = set servers to operate as master or slave 
 	disable_master_role_setting=0
-	
-	
-	
+		
+	# for maxadmin client, for monitoring and admin:
 	[CLI]
 	type=service
 	router=cli
@@ -158,6 +154,7 @@ EOM
 	type=listener
 	service=CLI
 	protocol=maxscaled
+	#Remove the address= entry to allow connections from any machine on your network. 
 	address=localhost
 	port=6604
 EOM
