@@ -111,7 +111,7 @@ EOM
 
 	for index in "${!dbServerAddresses[@]}"
 	do
-	  position = ${index+1}
+	  position = $index+1
       ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
 	  port = ${dbServerPorts[index]} | sed 's/[[:space:]]//g'
 	
