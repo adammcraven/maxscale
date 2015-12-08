@@ -50,9 +50,12 @@ create_config_file() {
 
 	for index in "${!dbServerAddresses[@]}"
 	do
+	  echo "==> Index is: $index"
 	  position = ${index+1}
+	  echo "==> Position is: $position"
 	  
       ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
+	  echo "==> IPAddress is: $ipAddress"
       #addressHostName = "address${position}"
       # echo $address1  address1 >> /etc/hosts
       #echo $ipAddress  $addressHostName >> /etc/hosts
