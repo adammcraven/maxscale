@@ -51,7 +51,7 @@ create_config_file() {
 	for index in "${!dbServerAddresses[@]}"
 	do
 	  echo "==> Index is: $index"
-	  let position = $index + 1
+	  let "position = $index + 1"
 	  echo "==> Position is: $position"
 	  
       ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
@@ -111,7 +111,7 @@ EOM
 
 	for index in "${!dbServerAddresses[@]}"
 	do
-	  let position = $index + 1
+	  let "position = $index + 1"
       ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
 	  port = ${dbServerPorts[index]} | sed 's/[[:space:]]//g'
 	
