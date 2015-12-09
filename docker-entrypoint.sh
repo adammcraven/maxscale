@@ -53,8 +53,8 @@ create_config_file() {
 	  echo "==> Index is: $index"
 	  let "position = $index + 1"
 	  echo "==> Position is: $position"
-	  
-      ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
+
+      ipAddress="$( echo -e "${dbServerAddresses[index]}" | sed 's/[[:space:]]//g' )"
 	  echo "==> IPAddress is: $ipAddress"
       #addressHostName = "address${position}"
       # echo $address1  address1 >> /etc/hosts
@@ -112,8 +112,8 @@ EOM
 	for index in "${!dbServerAddresses[@]}"
 	do
 	  let "position = $index + 1"
-      ipAddress = ${dbServerAddresses[index]} | sed 's/[[:space:]]//g'
-	  port = ${dbServerPorts[index]} | sed 's/[[:space:]]//g'
+      ipAddress="$( echo -e "${dbServerAddresses[index]}" | sed 's/[[:space:]]//g' )"
+	  port = "$( echo -e "${dbServerPorts[index]}" | sed 's/[[:space:]]//g' )"
 	
 	  ( cat <<EOM
 		[server$position]
