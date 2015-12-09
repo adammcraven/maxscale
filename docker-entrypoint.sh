@@ -34,10 +34,21 @@ validate_variables() {
 	  echo "==> ERROR: MONITOR_PASSWORD was not supplied"
 	  exit -1
 	fi
-	
 }
 
-function joinArrayToString { local IFS="$1"; shift; echo "$*"; }
+set_defaults() {
+	
+	# Set Defaults
+	if [ ! $LOG_DEBUG ]; then
+	  LOG_DEBUG=0
+	fi
+
+	if [ ! $LOG_TRACE ]; then
+	  LOG_TRACE=0
+	fi
+}
+
+joinArrayToString() { local IFS="$1"; shift; echo "$*"; }
 
 create_config_file() {
 
@@ -76,8 +87,8 @@ create_config_file() {
 [maxscale]
 threads=4
 log_messages=1
-log_trace=0
-log_debug=0
+log_trace=$LOG_TRACE
+log_debug=$LOG_DEBUG
 logdir=/tmp/
 
 [Galera Splitter Service]
@@ -178,5 +189,6 @@ run() {
 ###########################################
 echo "==> Starting docker-entrypoint.sh"
 validate_variables
+set_defaults
 create_config_file
 run
