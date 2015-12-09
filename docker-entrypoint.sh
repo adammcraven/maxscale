@@ -70,7 +70,7 @@ create_config_file() {
 	# https://mariadb.com/kb/en/mariadb-enterprise/mariadb-maxscale/maxscale-configuration-usage-scenarios/
 	
 	echo "==> Creating maxscale config file"
-	maxscaleConf="/etc/maxscale.d/maxscale.cnf"
+	maxscaleConf="/etc/maxscale.cnf"
 	
 	( cat <<EOM
 	[maxscale]
