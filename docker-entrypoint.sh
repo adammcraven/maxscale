@@ -60,10 +60,10 @@ create_config_file() {
       # echo $address1  address1 >> /etc/hosts
       #echo $ipAddress  $addressHostName >> /etc/hosts
 
-	  dbServers+=("server${position}")	  
+	  dbServers+=("server$position")	  
     done
 	
-	commaSeparatedDbServers=joinArrayToString , "${dbServers[@]}"
+	commaSeparatedDbServers=$( joinArrayToString , "${dbServers[@]}" )
 	
 	# Reference:
     # https://mariadb.com/kb/en/mariadb-enterprise/mariadb-maxscale/maxscale-readwrite-splitting-with-galera-cluster/	
