@@ -113,7 +113,7 @@ EOM
 	do
 	  let "position = $index + 1"
       ipAddress="$( echo -e "${dbServerAddresses[index]}" | sed 's/[[:space:]]//g' )"
-	  port = "$( echo -e "${dbServerPorts[index]}" | sed 's/[[:space:]]//g' )"
+	  port="$( echo -e "${dbServerPorts[index]}" | sed 's/[[:space:]]//g' )"
 	
 	  ( cat <<EOM
 		[server$position]
