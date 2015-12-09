@@ -73,30 +73,30 @@ create_config_file() {
 	maxscaleConf="/etc/maxscale.cnf"
 	
 	( cat <<EOM
-	[maxscale]
-	threads=4
-	log_messages=1
-	log_trace=0
-	log_debug=0
-	logdir=/tmp/
-	
-	[Galera Splitter Service]
-	type=service
-	router=readwritesplit
-	servers=$commaSeparatedDbServers
-	#max_slave_connections=50%
-	#max_slave_replication_lag=61
-	user=$MAXSCALE_USER
-	passwd=$MAXSCALE_PASSWORD
-	#filters=qla|fetch|from
-	
-	[Galera Splitter Listener]
-	type=listener
-	service=Galera Splitter Service
-	protocol=MySQLClient
-	port=3306
-	#socket=/tmp/ClusterMaster
-	#socket=/servers/maxscale/galera.sock
+[maxscale]
+threads=4
+log_messages=1
+log_trace=0
+log_debug=0
+logdir=/tmp/
+
+[Galera Splitter Service]
+type=service
+router=readwritesplit
+servers=$commaSeparatedDbServers
+#max_slave_connections=50%
+#max_slave_replication_lag=61
+user=$MAXSCALE_USER
+passwd=$MAXSCALE_PASSWORD
+#filters=qla|fetch|from
+
+[Galera Splitter Listener]
+type=listener
+service=Galera Splitter Service
+protocol=MySQLClient
+port=3306
+#socket=/tmp/ClusterMaster
+#socket=/servers/maxscale/galera.sock
 
 EOM
 	) >> $maxscaleConf
@@ -116,13 +116,14 @@ EOM
 	  port="$( echo -e "${dbServerPorts[index]}" | sed 's/[[:space:]]//g' )"
 	
 	  ( cat <<EOM
-		[server$position]
-		type=server
-		address=$ipAddress
-		port=$port
-		# node with the lowest index, if available, becomes Master
-		wsrep_local_index=$position
-		protocol=MySQLBackend
+[server$position]
+type=server
+address=$ipAddress
+port=$port
+# node with the lowest index, if available, becomes Master
+wsrep_local_index=$position
+protocol=MySQLBackend
+		
 EOM
 	  ) >> $maxscaleConf
     done
@@ -131,35 +132,35 @@ EOM
 
 	# Assign one node as the master and all others as slaves
 	( cat <<EOM
-	[Galera Monitor]
-	type=monitor
-	module=galeramon
-	servers=$commaSeparatedDbServers
-	user=$MONITOR_USER
-	passwd=$MONITOR_PASSWORD
-	monitor_interval=8000
-	backend_connect_timeout=3
-	backend_read_timeout=1
-	backend_write_timeout=2
-	# galeramon specific options
-	# always switch to the master with the lowest wsrep_local_index
-	disable_master_failback=0
-	available_when_donor=0
-	# 0 = set servers to operate as master or slave 
-	disable_master_role_setting=0
-		
-	# for maxadmin client, for monitoring and admin:
-	[CLI]
-	type=service
-	router=cli
+[Galera Monitor]
+type=monitor
+module=galeramon
+servers=$commaSeparatedDbServers
+user=$MONITOR_USER
+passwd=$MONITOR_PASSWORD
+monitor_interval=8000
+backend_connect_timeout=3
+backend_read_timeout=1
+backend_write_timeout=2
+# galeramon specific options
+# always switch to the master with the lowest wsrep_local_index
+disable_master_failback=0
+available_when_donor=0
+# 0 = set servers to operate as master or slave 
+disable_master_role_setting=0
 	
-	[CLI Listener]
-	type=listener
-	service=CLI
-	protocol=maxscaled
-	#Remove the address= entry to allow connections from any machine on your network. 
-	address=localhost
-	port=6604
+# for maxadmin client, for monitoring and admin:
+[CLI]
+type=service
+router=cli
+
+[CLI Listener]
+type=listener
+service=CLI
+protocol=maxscaled
+#Remove the address= entry to allow connections from any machine on your network. 
+address=localhost
+port=6604
 EOM
 	) >> $maxscaleConf
 }
