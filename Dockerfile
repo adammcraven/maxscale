@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y maxscale && \
     rm -rf /var/lib/apt/lists/*
 
 # VOLUME for log files
+RUN mkdir /var/lib/maxscale/log
 VOLUME ["/var/lib/maxscale/log"]
 
 
