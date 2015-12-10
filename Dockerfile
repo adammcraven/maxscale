@@ -19,8 +19,8 @@ RUN apt-get update && apt-get install -y maxscale && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# VOLUME for custom configuration
-VOLUME ["/etc/maxscale.d"]
+# VOLUME for log files
+VOLUME ["/var/lib/maxscale/log"]
 
 
 # EXPOSE ports
