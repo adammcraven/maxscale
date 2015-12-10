@@ -89,7 +89,7 @@ threads=4
 log_messages=1
 log_trace=$LOG_TRACE
 log_debug=$LOG_DEBUG
-logdir=/var/lib/maxscale/log/
+logdir=/var/lib/maxscale/log
 
 [Galera Splitter Service]
 type=service
