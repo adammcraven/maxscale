@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit if any subcommand or pipeline returns a non-zero status.
-set -ex
+set -e
 
 validate_variables() {
 	
